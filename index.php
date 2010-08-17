@@ -9,7 +9,9 @@
 
 ###############################################################################
 ## Include Section
+
 include("config.php");
+
 ###############################################################################
 
 ###############################################################################
@@ -19,8 +21,17 @@ function handle($chunks = false)
     $page = ! $chunks ? "default" 
                       : $page = array_shift( $chunks );
 
+    $path = str_replace( ".", "/", $page );
+    $page = array_pop(explode('.',$page) );
 
-    include(ROOT_DIR . '/application/'.$page.'.php');
+    $ary      = explode("/", $path);
+    array_pop($ary);
+    $bootfile = ROOT_DIR .'/application/' . implode("/",$ary) . "/__init__.php";
+
+    if(file_exists($bootfile))
+        include($bootfile);
+       
+    include(ROOT_DIR . '/application/'.$path.'.php');
     $cntrlname = ucfirst($page)."Controller";
     $ctrl = new $cntrlname;
 
@@ -56,5 +67,6 @@ else
 {
     handle();
 }
-############################################
+
+##############################################################################
 ?>
