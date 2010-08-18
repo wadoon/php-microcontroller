@@ -1,0 +1,19 @@
+PHP MicroController
+=====================================================
+
+Abstract 
+-----------------------------------------------------
+
+MC is a very thin and small request controller for php.
+
+
+Function
+-----------------------------------------------------
+
+something like url and file retrieve and execution blabla
+
+
+
+
+Website: http://fh-trier.de/~weigla/index.php?id=mc
+Author: Alexander Weigl <alexweigl@gmail.com>

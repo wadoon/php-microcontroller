@@ -8,10 +8,18 @@
 #
 
 ###############################################################################
-## Include Section
+## Include and Bootstrap Section
 
-include("config.php");
+include("include/config.inc.php");
+include("callbacks.inc.php");
 
+
+set_include_path(implode(PATH_SEPARATOR, 
+    array(
+        realpath(APP_DIR),
+        get_include_path()
+    ))
+);
 ###############################################################################
 
 ###############################################################################
@@ -19,23 +27,23 @@ include("config.php");
 function handle($chunks = false)
 {
     $page = ! $chunks ? "default" 
-                      : $page = array_shift( $chunks );
+                      : array_shift( $chunks );
 
     $path = str_replace( ".", "/", $page );
     $page = array_pop(explode('.',$page) );
 
     $ary      = explode("/", $path);
     array_pop($ary);
-    $bootfile = ROOT_DIR .'/application/' . implode("/",$ary) . "/__init__.php";
+    $bootfile = implode("/",$ary) . "/__init__.php";
 
-    if(file_exists($bootfile))
-        include($bootfile);
-       
-    include(ROOT_DIR . '/application/'.$path.'.php');
+    @include($bootfile);   
+    require_once("$path.php");
     $cntrlname = ucfirst($page)."Controller";
-    $ctrl = new $cntrlname;
 
-    if( count( $chunks ) > 0 )
+    $ctrl = new $cntrlname();
+    
+
+    if( $chunks &&  count( $chunks ) > 0 )
     {
         $method = array_pop($chunks);
         $template = call_user_func_array(array($ctrl,$method),$chunks);
@@ -44,7 +52,7 @@ function handle($chunks = false)
     {
         $template = $ctrl->index();
     }
-    view($template);
+    #view($page, $template);
 }
 
 
@@ -61,7 +69,11 @@ if( $pos = strpos( $request_url, $scrp_nam ) )
 {
     $request = substr($request_url , 1 + strlen($scrp_nam) + $pos );
     $chunks = explode('/', $request);
-    handle($chunks);
+    
+    if(count($chunks)==0 || !$chunks[0] )
+        handle();
+    else
+        handle($chunks);
 }
 else
 {
