@@ -8,7 +8,8 @@
  */
 function initctrl( $ctrlinstance )
 {
-
+    $ctrlinstance->smarty = createSmarty();
+    $ctrlinstance->database = createDatabase();    
 }
 
 /**

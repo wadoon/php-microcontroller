@@ -12,6 +12,7 @@
 
 include("include/config.inc.php");
 include("callbacks.inc.php");
+include("helper.inc.php");
 
 
 set_include_path(implode(PATH_SEPARATOR, 
@@ -29,30 +30,14 @@ function handle($chunks = false)
     $page = ! $chunks ? "default" 
                       : array_shift( $chunks );
 
-    $path = str_replace( ".", "/", $page );
-    $page = array_pop(explode('.',$page) );
-
-    $ary      = explode("/", $path);
-    array_pop($ary);
-    $bootfile = implode("/",$ary) . "/__init__.php";
-
-    @include($bootfile);   
-    require_once("$path.php");
-    $cntrlname = ucfirst($page)."Controller";
-
-    $ctrl = new $cntrlname();
-    
-
-    if( $chunks &&  count( $chunks ) > 0 )
+    if($chunks)                  
+        $func = array_shift($chunks);
+    else 
     {
-        $method = array_pop($chunks);
-        $template = call_user_func_array(array($ctrl,$method),$chunks);
+        $func = "index";
+        $chunks = array();    
     }
-    else
-    {
-        $template = $ctrl->index();
-    }
-    #view($page, $template);
+    dispatch($page, $func, $chunks);
 }
 
 
@@ -70,7 +55,7 @@ if( $pos = strpos( $request_url, $scrp_nam ) )
     $request = substr($request_url , 1 + strlen($scrp_nam) + $pos );
     $chunks = explode('/', $request);
     
-    if(count($chunks)==0 || !$chunks[0] )
+    if( !$chunks || !$chunks[0] )
         handle();
     else
         handle($chunks);

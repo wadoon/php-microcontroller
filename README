@@ -7,10 +7,37 @@ Abstract
 MC is a very thin and small request controller for php.
 
 
-Function
+Working
 -----------------------------------------------------
 
-something like url and file retrieve and execution blabla
+Let's take an example request 
+
+                  http://example.com/index.php/mod/fun/a/B/c.
+
+The controller determines the path after index.php and tries to find the correct
+php files.
+    
+    0)  calls invidual callback handler reqrewrite
+
+    1)  includes APP_DIR/mod.php
+
+    2)  tries to instanciate ControllerMod class (default contructor)
+
+    3)  callback initctrl with the instance is called
+
+    4)  method fun is invoked on the controller object with the arguments
+        fun(a,B,c).
+
+
+One note, you can use punctation for making an controller hierarchie, e.g.
+index.php/abc.def.ghi/foo will include abc/def/ghi.php and call
+new GhiController().foo().
+
+Helper
+--------------------------------------------------------------------------------
+
+
+
 
 
 
